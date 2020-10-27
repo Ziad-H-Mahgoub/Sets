@@ -1,4 +1,5 @@
 package com.solutions;
+import java.io.*;
 import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.LinkedList;
@@ -9,50 +10,17 @@ public class Main {
     public static HashTableDictionary<String , String> Universe;
     public static HashTableDictionary<String , HashTableDictionary<String , String>> Sets;
     public static   Scanner scanner = new Scanner(System.in);
+
     public static void main(String[] args) {
         Universe = new HashTableDictionary<>();
         Sets = new HashTableDictionary<>();
-        while (true) {
-            System.out.print("Enter your element: \r");
-            String element = getString();
-            if (element.equals("")) break;
-            Universe.set(element,element);
-        }
-        System.out.println("Your Universe set is: "+ Arrays.toString(Universe.getAllElements())+"\n");
-        int number_of_sets = getInteger();
-        for (int i = 1 ;i <= number_of_sets ;i++){
-            System.out.println("Enter name of " + i + " the set :\r");
-            String set;
-            while(true) {
-                set = getString();
-                Object ch = Sets.get(set);
-                if(ch != null)
-                    System.out.println(set+" is already there!\nEnter name of set: ");
-                else
-                    break;
-            }
-            System.out.println("Enter elements of set "+set);
-            HashTableDictionary<String,String> theSet = new HashTableDictionary<>();
-            while(true){
-                String element = checkValid();
-                if (element.equals(""))
-                    break;
-                theSet.set(element,element);
-            }
-            System.out.println("the set is : " + set);
-            System.out.println(Arrays.toString(theSet.getAllElements()));
-            Sets.set(set , theSet);
-        }
-
+        load();
         program();
-
-
-
     }
 
-    public static int getInteger() {
+    public static int getInteger(String input) {
         while (true) {
-            System.out.print("How many sets you Want: \r");
+            System.out.print(input);
             int choice;
             try {
                 choice = scanner.nextInt();
@@ -85,11 +53,13 @@ public class Main {
     }
 
     public static void menu(){
+        System.out.println("\n\n\\");
         System.out.println("1:Intersection of 2 sets");
         System.out.println("2:Union of 2 sets");
         System.out.println("3:Compliment of a set");
         System.out.println("4:Add a subset of universe");
         System.out.println("5:Add a string to universe ");
+        System.out.println("6:Show all sets ");
         System.out.println("0:Exit");
     }
 
@@ -97,12 +67,17 @@ public class Main {
         boolean quit = false;
         while(!quit){
             menu();
-            int choice = getInteger();
+            int choice = getInteger("Enter your choice : ");
             switch(choice){
                 case 1 : intersection();break;
                 case 2 : union();break;
                 case 3 : compliment();break;
-                default: quit = true;
+                case 4: addSubsets();break;
+                case 5 : addToUniverse();break;
+                case 6 : showData();break;
+                case 0: save();quit = true;break;
+                default:
+                    System.out.println("Invalid Input!");
             }
         }
     }
@@ -112,7 +87,7 @@ public class Main {
         System.out.println("Second set: ");
         HashTableDictionary<String,String>  set2 = Sets.get(checkSet());
         HashTableDictionary<String,String> big;
-        String[] small;
+        Object[] small;
         LinkedList<String> intersection = new LinkedList<>();
         if(set1.size() > set2.size()){
             big = set1;
@@ -121,10 +96,10 @@ public class Main {
             big = set2;
             small = set1.getAllElements();
         }
-        for (String i:small){
-            Object check = big.get(i);
+        for (Object i:small){
+            Object check = big.get(i.toString());
             if(check!= null)
-                intersection.add(i);
+                intersection.add(i.toString());
         }
         System.out.println(intersection.toString());
     }
@@ -136,13 +111,13 @@ public class Main {
         HashTableDictionary<String,String>  set2 = Sets.get(checkSet());
 
         HashTableDictionary<String,String> union = new HashTableDictionary<>();
-        String[] setOne =set1.getAllElements();
-        String[] setTwo=set2.getAllElements();
-        for (String word: setOne){
-            union.set(word,word);
+        Object[] setOne =set1.getAllElements();
+        Object[] setTwo=set2.getAllElements();
+        for (Object word: setOne){
+            union.set(word.toString(),word.toString());
         }
-        for(String word : setTwo){
-            union.set(word,word);
+        for(Object word : setTwo){
+            union.set(word.toString(),word.toString());
         }
         System.out.println(Arrays.toString(union.getAllElements()));
     }
@@ -170,7 +145,107 @@ public class Main {
             Object chk = Universe.get(element);
             if (chk != null)
                 return element;
-            System.out.println("Wrong bitch!");
+            System.out.println("Wrong !");
+        }
+    }
+
+    public static void addToUniverse(){
+        System.out.println("On end :just press enter");
+        while (true) {
+            System.out.print("Enter your element: \r");
+            String element = getString();
+            if (element.equals("")) break;
+            Universe.set(element,element);
+        }
+        System.out.println("Your Universe set is: "+ Arrays.toString(Universe.getAllElements())+"\n");
+    }
+
+    public static void addSubsets(){
+        int number_of_sets = getInteger("Enter number of sets: ");
+        for (int i = 1 ;i <= number_of_sets ;i++){
+            System.out.println("Enter name of " + i + " the set :\r");
+            String set;
+            while(true) {
+                set = getString();
+                Object ch = Sets.get(set);
+                if(ch != null)
+                    System.out.println(set+" is already there!\nEnter name of set: ");
+                else
+                    break;
+            }
+            System.out.println("Enter elements of set "+set);
+            HashTableDictionary<String,String> theSet = new HashTableDictionary<>();
+            while(true){
+                String element = checkValid();
+                if (element.equals(""))
+                    break;
+                theSet.set(element,element);
+            }
+            System.out.println("the set is : " + set);
+            System.out.println(Arrays.toString(theSet.getAllElements()));
+            Sets.set(set , theSet);
+        }
+    }
+
+    public static void save(){
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(new File("universe.txt")));
+            Object[] names =Universe.getAllElements();
+            for (Object name : names)
+                writer.write(name.toString()+"\n");
+            writer.close();
+            ///New we save the set names
+            Object[] sets = Sets.getAllKeys();
+            writer =  new BufferedWriter(new FileWriter(new File("sets_names.txt")));
+            for (Object name : sets)
+                writer.write(name.toString()+"\n");
+            writer.close();
+
+            //Now a file for each set
+            for(Object setName : sets){
+                writer = new BufferedWriter(new FileWriter(new File(setName+".txt")));
+                HashTableDictionary<String,String> set = Sets.get(setName.toString());
+                Object[] words = set.getAllElements();
+                for(Object word : words){
+                    writer.write(word.toString()+"\n");
+                }
+                writer.close();
+            }
+        }catch (IOException e){
+            System.out.println("Failed to save");
+        }
+    }
+
+    public static void load(){
+        try{
+            BufferedReader read = new BufferedReader(new FileReader("universe.txt"));
+            String word;
+            while((word=read.readLine()) !=null)
+//                System.out.println(word);
+                Universe.set(word,word);
+            //Now we read set names
+            //And in same loop we fetch the set file
+            BufferedReader setsFile = new BufferedReader(new FileReader("sets_names.txt"));
+            String nameOfSet;
+            while ((nameOfSet=setsFile.readLine())!=null){
+                read = new BufferedReader(new FileReader(nameOfSet+".txt"));
+                HashTableDictionary<String,String> set = new HashTableDictionary<>();
+                String element;
+                while((element = read.readLine())!=null)
+                    set.set(element,element);
+                Sets.set(nameOfSet , set);
+            }
+
+        }catch (IOException e){
+            System.out.println("Failed to load");
+        }
+    }
+    public static void showData(){
+        //First universe
+        System.out.println("Universe: "+Universe.toString());
+        Object[]sets =Sets.getAllKeys();
+        for (Object set : sets){
+            System.out.println(set.toString()+" : "+Sets.get(set.toString()).toString());
         }
     }
 }
