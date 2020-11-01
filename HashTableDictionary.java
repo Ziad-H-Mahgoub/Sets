@@ -1,6 +1,8 @@
 package com.solutions;
 
 
+import java.util.Objects;
+
 /**
  * This hash table is implemented by the separate chaining way.
  * The SingleLinkedList is an imported class from a previous project ,it's not built in.
@@ -82,6 +84,18 @@ public class HashTableDictionary<K,V> implements IDictionary<K,V> {
     }
 
     @Override
+    public String toString() {
+        Object[]words = getAllElements();
+        String string="";
+        for (int i = 0; i < words.length ; i++){
+            string+=words[i].toString();
+            if(i<words.length-1)
+                string+=" , ";
+        }
+        return string;
+    }
+
+    @Override
     public V remove(K key) {
         checkNullity(key);
         int index=hashFunction(key);
@@ -99,14 +113,29 @@ public class HashTableDictionary<K,V> implements IDictionary<K,V> {
         return null;
     }
 
-    public String[] getAllElements(){
-        String[] elements =  new String[size];
+    public K[] getAllKeys(){
+        K[] elements =  (K[])new Object[size];
         int point = 0;
         for (LinkedList<Node> list : table){
             if(list == null)
                 continue;
             for (int i =0;i<list.size();i++){
-                elements[point] = (String) list.get(i).element;
+                elements[point] = (K) list.get(i).key;
+                point++;
+            }
+            if(point == size)
+                return elements;
+        }
+        return elements;
+    }
+    public V[] getAllElements(){
+        V[] elements =  (V[])new Object[size];
+        int point = 0;
+        for (LinkedList<Node> list : table){
+            if(list == null)
+                continue;
+            for (int i =0;i<list.size();i++){
+                elements[point] = (V) list.get(i).element;
                 point++;
             }
             if(point == size)
