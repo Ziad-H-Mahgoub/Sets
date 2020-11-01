@@ -45,7 +45,7 @@ public class Main {
             String set = getString();
             HashTableDictionary<String,String> setElements = Sets.get(set);
             if(setElements == null){//Set is not found
-                System.out.println("You entered a fuckin name!!");
+                System.out.println("The Set does not exist!!");
             }
             else
                 return set;
@@ -53,7 +53,7 @@ public class Main {
     }
 
     public static void menu(){
-        System.out.println("\n\n\\");
+        System.out.println("\n\n");
         System.out.println("1:Intersection of 2 sets");
         System.out.println("2:Union of 2 sets");
         System.out.println("3:Compliment of a set");
@@ -82,9 +82,9 @@ public class Main {
         }
     }
     public static void intersection(){
-        System.out.println("First set: ");
+        System.out.println("        ' First Set ' ");
         HashTableDictionary<String,String>  set1 = Sets.get(checkSet());
-        System.out.println("Second set: ");
+        System.out.println("        'Second Set' ");
         HashTableDictionary<String,String>  set2 = Sets.get(checkSet());
         HashTableDictionary<String,String> big;
         Object[] small;
@@ -101,13 +101,14 @@ public class Main {
             if(check!= null)
                 intersection.add(i.toString());
         }
+        System.out.println("The Intersection is :");
         System.out.println(intersection.toString());
     }
 
     public static void union(){
-        System.out.println("First set: ");
+        System.out.println("        ' First Set ' ");
         HashTableDictionary<String,String>  set1 = Sets.get(checkSet());
-        System.out.println("Second set: ");
+        System.out.println("        'Second Set' ");
         HashTableDictionary<String,String>  set2 = Sets.get(checkSet());
 
         HashTableDictionary<String,String> union = new HashTableDictionary<>();
@@ -119,6 +120,7 @@ public class Main {
         for(Object word : setTwo){
             union.set(word.toString(),word.toString());
         }
+        System.out.println("The Union is :");
         System.out.println(Arrays.toString(union.getAllElements()));
     }
 
@@ -134,6 +136,7 @@ public class Main {
             if(chk == null)
                 compliment.add(word.toString());
         }
+        System.out.println("The Compliment is : ");
         System.out.println(compliment.toString());
     }
     public static String checkValid(){
